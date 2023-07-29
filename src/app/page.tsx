@@ -1,6 +1,7 @@
 'use client'
 
 import { signIn, useSession } from 'next-auth/react'
+import TripSearch from './components/TripSearch';
 
 export default function Home() {
   const {data} = useSession()
@@ -8,8 +9,8 @@ export default function Home() {
   
 
   return (
-    <div className='bg-primaryDarker'>
-      <h1 className='text-4xl'></h1>
+    <div>
+      <TripSearch />
     </div>
   );
 }
