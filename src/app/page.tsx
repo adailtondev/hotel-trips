@@ -2,6 +2,7 @@
 
 import { signIn, useSession } from 'next-auth/react'
 import TripSearch from './components/TripSearch';
+import QuickSearch from './components/QuickSearch';
 
 export default function Home() {
   const {data} = useSession()
@@ -11,6 +12,7 @@ export default function Home() {
   return (
     <div>
       <TripSearch />
+      <QuickSearch />
     </div>
   );
 }
