@@ -3,7 +3,7 @@
 import DataPicker from "@/components/DataPicker";
 import Input from "@/components/Input";
 import React from "react";
-import CurrencyInput from "react-currency-input-field";
+import CurrencyInput from "@/components/CurrencyInput";
 
 const TripSearch = () => {
   return (
@@ -20,7 +20,10 @@ const TripSearch = () => {
             onChange={() => {}}
             className="w-full"
           />
-          <CurrencyInput allowDecimals={false} placeholder="Orçamento" className=""/>
+          <CurrencyInput
+            placeholder="Orçamento"
+            className=""
+          />
         </div>
       </div>
     </div>
