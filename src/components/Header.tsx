@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { AiOutlineMenu } from "react-icons/ai";
+import Link from "next/link";
 
 const Header = () => {
   const { status, data } = useSession();
@@ -20,15 +21,16 @@ const Header = () => {
 
   return (
     <div className="container mx-auto p-5 py-0 h-[93px] flex justify-between items-center">
-      <div className="relative h-[32px] w-[182px]">
-        <Image
-          width={183}
-          height={32}
-          src="/logo.png"
-          alt={"Logo da Hotel Trips"}
-        ></Image>
-      </div>
-
+      <Link href={'/'}>
+        <div className="relative h-[32px] w-[182px]">
+          <Image
+            width={183}
+            height={32}
+            src="/logo.png"
+            alt={"Logo da Hotel Trips"}
+          ></Image>
+        </div>
+      </Link>
       {status == "unauthenticated" && (
         <button
           className="text-primary text-sm font-semibold"
@@ -40,7 +42,11 @@ const Header = () => {
 
       {status == "authenticated" && data.user && (
         <div className="z-50 flex items-center gap-3 p-2 px-3 border-grayLighter border border-solid rounded-full relative">
-          <AiOutlineMenu size={16} onClick={handleMenuClick} className="cursor-pointer"></AiOutlineMenu>
+          <AiOutlineMenu
+            size={16}
+            onClick={handleMenuClick}
+            className="cursor-pointer"
+          ></AiOutlineMenu>
 
           <Image
             height={35}
