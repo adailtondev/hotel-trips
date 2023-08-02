@@ -7,9 +7,9 @@ import { AiOutlineMenu } from "react-icons/ai";
 import Link from "next/link";
 
 const Header = () => {
-  const { status, data } = useSession();
-
   const [menuIsOpen, setMenuIsOpen] = useState(false);
+
+  const { status, data } = useSession();
 
   const handleLoginClick = () => signIn();
 
@@ -19,9 +19,11 @@ const Header = () => {
   };
   const handleMenuClick = () => setMenuIsOpen(!menuIsOpen);
 
+  const handleMyTripsClick = () => {};
+
   return (
     <div className="container mx-auto p-5 py-0 h-[93px] flex justify-between items-center">
-      <Link href={'/'}>
+      <Link href={"/"}>
         <div className="relative h-[32px] w-[182px]">
           <Image
             width={183}
@@ -56,9 +58,14 @@ const Header = () => {
             className="rounded-full shadow-md"
           ></Image>
           {menuIsOpen && (
-            <div className="absolute top-14 left-0 w-full h-full bg-white rounded-lg shadow-md flex flex-col justify-center items-center">
+            <div className="absolute top-14 left-0 w-full h-[100px] bg-white rounded-lg shadow-md flex flex-col justify-center items-center">
+              <Link href="/my-trips">
+                <button className="text-primary pb-2 border-b border-grayPrimary border-solid text-sm font-semibold">
+                  Minhas Viagens
+                </button>
+              </Link>
               <button
-                className="text-primary text-sm font-semibold"
+                className="text-primary pt-2 text-sm font-semibold"
                 onClick={handleLogoutClick}
               >
                 Logout
