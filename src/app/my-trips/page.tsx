@@ -29,7 +29,7 @@ const MyTrips = () => {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/");
+      return router.push("/");
     }
 
     fetchReservations();
@@ -42,7 +42,7 @@ const MyTrips = () => {
       </h1>
       {reservations.length > 0 ? (
         reservations?.map((reservation) => (
-          <UserReservationItem key={reservation.id} reservation={reservation} />
+          <UserReservationItem key={reservation.id} reservation={reservation} fetchReservations={fetchReservations}/>
         ))
       ) : (
         <div className="flex flex-col">
