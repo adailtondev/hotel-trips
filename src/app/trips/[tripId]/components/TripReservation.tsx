@@ -1,11 +1,12 @@
 "use client";
 
-import DataPicker from "@/components/DataPicker";
-import Input from "@/components/Input";
-import React from "react";
 import Button from "@/components/Button";
-import { Controller, useForm } from "react-hook-form";
+import DatePicker from "@/components/DataPicker";
+import Input from "@/components/Input";
 import { differenceInDays } from "date-fns";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 
 interface TripReservationProps {
   tripId: string;
@@ -21,13 +22,7 @@ interface TripReservationForm {
   endDate: Date | null;
 }
 
-const TripReservation = ({
-  maxGuests,
-  tripStartDate,
-  tripEndDate,
-  pricePerDay,
-  tripId,
-}: TripReservationProps) => {
+const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, pricePerDay }: TripReservationProps) => {
   const {
     register,
     handleSubmit,
@@ -37,13 +32,15 @@ const TripReservation = ({
     setError,
   } = useForm<TripReservationForm>();
 
+  const router = useRouter();
+
   const onSubmit = async (data: TripReservationForm) => {
-    const response = await fetch("http://localhost/api/trips/check", {
+    const response = await fetch("/api/trips/check", {
       method: "POST",
       body: Buffer.from(
         JSON.stringify({
           startDate: data.startDate,
-          endData: data.endDate,
+          endDate: data.endDate,
           tripId,
         })
       ),
@@ -64,7 +61,7 @@ const TripReservation = ({
     }
 
     if (res?.error?.code === "INVALID_START_DATE") {
-      setError("startDate", {
+      return setError("startDate", {
         type: "manual",
         message: "Data inválida.",
       });
@@ -76,58 +73,68 @@ const TripReservation = ({
         message: "Data inválida.",
       });
     }
+
+    router.push(
+      `/trips/${tripId}/confirmation?startDate=${data.startDate?.toISOString()}&endDate=${data.endDate?.toISOString()}&guests=${data.guests}`
+    );
   };
 
   const startDate = watch("startDate");
   const endDate = watch("endDate");
 
   return (
-    <div className="flex flex-col px-5">
-      <div className="flex gap-3">
+    <div className="flex flex-col px-5 lg:min-w-[380px] lg:p-5 lg:border-grayLighter lg:border lg:rounded-lg lg:shadow-md">
+      <p className="text-xl hidden text-primaryDarker mb-4 lg:block">
+        <span className="font-semibold">R${pricePerDay}</span> por dia
+      </p>
+
+      <div className="flex gap-4">
         <Controller
           name="startDate"
           rules={{
             required: {
               value: true,
-              message: "Data inicial é obrigatória",
+              message: "Data inicial é obrigatória.",
             },
           }}
           control={control}
           render={({ field }) => (
-            <DataPicker
+            <DatePicker
               error={!!errors?.startDate}
               errorMessage={errors?.startDate?.message}
               onChange={field.onChange}
               selected={field.value}
-              className="w-full"
               placeholderText="Data de Início"
+              className="w-full"
               minDate={tripStartDate}
             />
           )}
         />
+
         <Controller
           name="endDate"
           rules={{
             required: {
               value: true,
-              message: "Data final é obrigatória",
+              message: "Data final é obrigatória.",
             },
           }}
           control={control}
           render={({ field }) => (
-            <DataPicker
+            <DatePicker
               error={!!errors?.endDate}
               errorMessage={errors?.endDate?.message}
               onChange={field.onChange}
               selected={field.value}
-              className="w-full"
               placeholderText="Data Final"
+              className="w-full"
               maxDate={tripEndDate}
               minDate={startDate ?? tripStartDate}
             />
           )}
         />
       </div>
+
       <Input
         {...register("guests", {
           required: {
@@ -136,7 +143,7 @@ const TripReservation = ({
           },
           max: {
             value: maxGuests,
-            message: `Número de hóspedes não pode ser maior que ${maxGuests}.`
+            message: `Número de hóspedes não pode ser maior que ${maxGuests}.`,
           },
         })}
         placeholder={`Número de hóspedes (max: ${maxGuests})`}
@@ -149,16 +156,12 @@ const TripReservation = ({
       <div className="flex justify-between mt-3">
         <p className="font-medium text-sm text-primaryDarker">Total: </p>
         <p className="font-medium text-sm text-primaryDarker">
-          {startDate && endDate
-            ? `R$${differenceInDays(endDate, startDate) * pricePerDay}` ?? 1
-            : "R$0"}
+          {startDate && endDate ? `R$${differenceInDays(endDate, startDate) * pricePerDay}` ?? 1 : "R$0"}
         </p>
       </div>
-      <div className="pb-10 border-b border-grayLighter w-full">
-        <Button
-          onClick={() => handleSubmit(onSubmit)()}
-          className="mt-3 w-full"
-        >
+
+      <div className="pb-10 border-b border-b-grayLighter w-full lg:border-none lg:pb-0">
+        <Button onClick={() => handleSubmit(onSubmit)()} className="mt-3 w-full">
           Reservar agora
         </Button>
       </div>
