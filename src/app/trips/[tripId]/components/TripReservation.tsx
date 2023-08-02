@@ -6,9 +6,9 @@ import React from "react";
 import Button from "@/components/Button";
 import { Controller, useForm } from "react-hook-form";
 import { differenceInDays } from "date-fns";
-import { Decimal } from "@prisma/client/runtime/library";
 
 interface TripReservationProps {
+  tripId: string;
   tripStartDate: Date;
   tripEndDate: Date;
   maxGuests: number;
@@ -26,6 +26,7 @@ const TripReservation = ({
   tripStartDate,
   tripEndDate,
   pricePerDay,
+  tripId,
 }: TripReservationProps) => {
   const {
     register,
@@ -33,9 +34,49 @@ const TripReservation = ({
     formState: { errors },
     control,
     watch,
+    setError,
   } = useForm<TripReservationForm>();
 
-  const onSubmit = (data: any) => {};
+  const onSubmit = async (data: TripReservationForm) => {
+    const response = await fetch("http://localhost/api/trips/check", {
+      method: "POST",
+      body: Buffer.from(
+        JSON.stringify({
+          startDate: data.startDate,
+          endData: data.endDate,
+          tripId,
+        })
+      ),
+    });
+
+    const res = await response.json();
+
+    if (res?.error?.code === "TRIP_ALREADY_RESERVED") {
+      setError("startDate", {
+        type: "manual",
+        message: "Esta data já está reservada.",
+      });
+
+      setError("endDate", {
+        type: "manual",
+        message: "Esta data já está reservada.",
+      });
+    }
+
+    if (res?.error?.code === "INVALID_START_DATE") {
+      setError("startDate", {
+        type: "manual",
+        message: "Data inválida.",
+      });
+    }
+
+    if (res?.error?.code === "INVALID_END_DATE") {
+      setError("endDate", {
+        type: "manual",
+        message: "Data inválida.",
+      });
+    }
+  };
 
   const startDate = watch("startDate");
   const endDate = watch("endDate");
@@ -103,7 +144,9 @@ const TripReservation = ({
       <div className="flex justify-between mt-3">
         <p className="font-medium text-sm text-primaryDarker">Total: </p>
         <p className="font-medium text-sm text-primaryDarker">
-        {startDate && endDate ? `R$${differenceInDays(endDate, startDate) * pricePerDay}` ?? 1 : "R$0"}
+          {startDate && endDate
+            ? `R$${differenceInDays(endDate, startDate) * pricePerDay}` ?? 1
+            : "R$0"}
         </p>
       </div>
       <div className="pb-10 border-b border-grayLighter w-full">
