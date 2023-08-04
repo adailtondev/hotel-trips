@@ -75,7 +75,7 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
     }
 
     router.push(
-      `/trips/${tripId}/confirmation?startDate=${data.startDate?.toISOString()}&endDate=${data.endDate?.toISOString()}&guests=${data.guests}`
+      `http://localhost:3000/trips/${tripId}/confirmation?startDate=${data.startDate?.toISOString()}&endDate=${data.endDate?.toISOString()}&guests=${data.guests}`
     );
   };
 
