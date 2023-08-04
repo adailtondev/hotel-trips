@@ -19,7 +19,7 @@ const Trips = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       const response = await fetch(
-        `http://localhost:3000/api/trips/search?text=${searchParams.get(
+        `/api/trips/search?text=${searchParams.get(
           "text"
         )}&startDate=${searchParams.get("startDate")}&budget=${searchParams.get(
           "budget"
